@@ -1,6 +1,6 @@
 {
   "name": "@houtini/geo-analyzer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "MCP server for GEO (Generative Engine Optimization) analysis. Deploy your own Cloudflare Worker, choose any LLM model, get detailed content analysis for AI search visibility.",
   "type": "module",
   "bin": {
