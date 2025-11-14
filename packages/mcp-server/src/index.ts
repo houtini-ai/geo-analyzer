@@ -155,7 +155,7 @@ function formatDetailedAnalysis(rawResult: any): DetailedAnalysisResult {
 const server = new Server(
   {
     name: 'geo-analyzer',
-    version: '1.0.6',
+    version: '1.0.7',
   },
   {
     capabilities: {
