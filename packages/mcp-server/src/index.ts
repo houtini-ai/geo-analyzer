@@ -194,10 +194,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: 'string',
               description: 'Optional context string describing the content topic (e.g., "sim racing equipment", "SEO guide"). Used for relevance scoring only. Defaults to "general content analysis".',
             },
-            title: {
-              type: 'string',
-              description: 'Optional: Title of the content for reference',
-            },
             aiModel: {
               type: 'string',
               description: 'Optional: AI model for semantic analysis (default: @cf/meta/llama-3.3-70b-instruct-fp8-fast)',
@@ -278,10 +274,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 
   if (request.params.name === 'analyze_text') {
-    const { content, query = 'general content analysis', title, aiModel, output_format = 'detailed' } = request.params.arguments as {
+    const { content, query = 'general content analysis', aiModel, output_format = 'detailed' } = request.params.arguments as {
       content: string;
       query?: string;
-      title?: string;
       aiModel?: string;
       output_format?: 'detailed' | 'summary';
     };
@@ -299,7 +294,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         body: JSON.stringify({
           content,
           query,
-          title,
           aiModel,
         }),
       });

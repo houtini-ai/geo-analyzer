@@ -58,8 +58,6 @@ export class GeoAnalyzer {
     const jinaContent = await this.jinaClient.read(url, {
       withImageCaptions: true,
       withLinksSummary: true,
-      returnFormat: 'json',
-      useReaderLM: true,
     });
 
     let llmAnalysis: LLMAnalysisResult | undefined;
@@ -137,11 +135,11 @@ export class GeoAnalyzer {
   async analyzeText(
     content: string,
     targetQuery: string,
-    options: { title?: string; url?: string; aiModel?: string } = {}
+    options: { aiModel?: string } = {}
   ): Promise<Omit<GeoApiResponsePartial, 'meta'>> {
     const jinaContent: JinaContent = {
-      title: options.title || 'Optimized Content',
-      url: options.url || 'text://optimized-content',
+      title: 'Text Analysis',
+      url: 'text://content',
       content,
       usage: {
         tokens: 0,

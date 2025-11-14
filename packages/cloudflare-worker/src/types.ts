@@ -15,8 +15,6 @@ export interface AnalyzeRequest {
 export interface AnalyzeTextRequest {
   content: string;
   query: string;
-  title?: string;
-  url?: string;
   aiModel?: string;
 }
 

@@ -23,7 +23,7 @@ export class JinaClient {
 
   async read(url: string, options: JinaReaderOptions = {}): Promise<JinaContent> {
     const headers: Record<string, string> = {
-      Accept: options.returnFormat === 'json' ? 'application/json' : 'text/plain',
+      'X-Return-Format': 'markdown',
     };
 
     if (this.apiKey) {
@@ -50,10 +50,6 @@ export class JinaClient {
       headers['X-Timeout'] = options.timeout.toString();
     }
 
-    if (options.useReaderLM) {
-      headers['X-Use-Readerlm-V2'] = 'true';
-    }
-
     const response = await fetch(`${this.baseUrl}/${url}`, { headers });
 
     if (!response.ok) {
@@ -64,17 +60,12 @@ export class JinaClient {
       );
     }
 
-    if (options.returnFormat === 'json') {
-      const json = (await response.json()) as JinaReaderResponse;
-      return json.data;
-    } else {
-      const text = await response.text();
-      return {
-        url,
-        title: '',
-        content: text,
-      };
-    }
+    const text = await response.text();
+    return {
+      url,
+      title: '',
+      content: text,
+    };
   }
 
   async search(query: string, options: JinaSearchOptions = {}): Promise<JinaContent[]> {

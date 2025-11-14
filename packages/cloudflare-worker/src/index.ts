@@ -128,8 +128,6 @@ export default {
           body.content,
           body.query || 'general content analysis',
           {
-            title: body.title,
-            url: body.url,
             aiModel: body.aiModel,
           }
         );

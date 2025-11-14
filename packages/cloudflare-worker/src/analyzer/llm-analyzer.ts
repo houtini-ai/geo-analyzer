@@ -124,14 +124,17 @@ export class LLMAnalyzer {
 
   constructor(ai: Ai, model?: string) {
     this.ai = ai;
-    this.model = model || '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
+    this.model = model || '@cf/meta/llama-4-scout-17b-16e-instruct';
   }
 
   async analyzeSemantics(
     content: string,
     targetQuery: string
   ): Promise<LLMAnalysisResult> {
-    const truncatedContent = this.truncateContent(content, 70000);
+    // 131K token context limit (Llama 4 Scout)
+    // Reserve ~5K for prompt/instructions and ~4K for response = 122K for content
+    // Rough estimate: 4 chars per token = 488K characters max
+    const truncatedContent = this.truncateContent(content, 480000);
     
     const prompt = this.buildUnifiedPrompt(truncatedContent, targetQuery);
     
@@ -370,7 +373,7 @@ Begin with { and end with }`;
             content: prompt,
           },
         ],
-        max_tokens: 4500,
+        max_tokens: 4096,
         temperature: 0.1,
       });
 
