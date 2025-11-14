@@ -34,6 +34,27 @@ if (!GEO_API_URL) {
   process.exit(1);
 }
 
+if (!JINA_API_KEY) {
+  console.error('\n⚠️  WARNING: JINA_API_KEY environment variable is not set.\n');
+  console.error('The analyze_url tool requires a Jina Reader API key to fetch web content.');
+  console.error('Without it, only analyze_text will work.\n');
+  console.error('To fix this:');
+  console.error('1. Get a free API key from https://jina.ai/reader');
+  console.error('2. Add it to your Claude Desktop config:');
+  console.error('   {');
+  console.error('     "mcpServers": {');
+  console.error('       "geo-analyzer": {');
+  console.error('         "command": "npx",');
+  console.error('         "args": ["-y", "@houtini/geo-analyzer@latest"],');
+  console.error('         "env": {');
+  console.error('           "GEO_WORKER_URL": "https://your-worker.workers.dev",');
+  console.error('           "JINA_API_KEY": "your-jina-api-key-here"');
+  console.error('         }');
+  console.error('       }');
+  console.error('     }');
+  console.error('   }\n');
+}
+
 interface DetailedAnalysisResult {
   summary: {
     overall_score: number;
