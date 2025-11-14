@@ -148,7 +148,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: 'analyze_url',
-        description: 'Analyze a published URL for AI search optimization. Just provide the URL - the tool will fetch and analyze the content automatically.',
+        description: 'Analyze a published URL for AI search optimization. Performs comprehensive content quality analysis including AI slop detection, writing quality, E-E-A-T signals, and actionability. Just provide the URL.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -158,7 +158,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             query: {
               type: 'string',
-              description: 'Optional: Target keyword/topic to optimize for. If not provided, the tool will infer the main topic from the content.',
+              description: 'Optional context string describing the content topic (e.g., "sim racing wheels", "content optimization"). Used for relevance scoring only. Defaults to "general content analysis".',
             },
             aiModel: {
               type: 'string',
@@ -182,21 +182,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'analyze_text',
-        description: 'Analyze pasted text content for AI search optimization. Just provide the content - no URL needed. The tool will automatically analyze it.',
+        description: 'Analyze pasted text content for AI search optimization. Performs comprehensive content quality analysis including AI slop detection, writing quality, E-E-A-T signals, data points, originality, and actionability. Just provide the content text.',
         inputSchema: {
           type: 'object',
           properties: {
             content: {
               type: 'string',
-              description: 'The text content to analyze',
+              description: 'The text content to analyze (markdown, plain text, or HTML)',
             },
             query: {
               type: 'string',
-              description: 'Optional: Target keyword/topic to optimize for. If not provided, the tool will infer the main topic from the content.',
+              description: 'Optional context string describing the content topic (e.g., "sim racing equipment", "SEO guide"). Used for relevance scoring only. Defaults to "general content analysis".',
             },
             title: {
               type: 'string',
-              description: 'Optional: Title for the content',
+              description: 'Optional: Title of the content for reference',
             },
             aiModel: {
               type: 'string',
