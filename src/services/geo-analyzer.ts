@@ -24,10 +24,7 @@ export class GeoAnalyzer {
     this.reportFormatter = new ReportFormatter();
   }
 
-  async analyze(options: AnalysisOptions): Promise<{
-    report: string;
-    artifactPrompt?: string;
-  }> {
+  async analyze(options: AnalysisOptions): Promise<string> {
     let contentData: ContentData;
 
     if (options.url) {
@@ -93,14 +90,6 @@ export class GeoAnalyzer {
       recommendations: patternResult.recommendations,
     };
 
-    const markdownReport = this.reportFormatter.formatMarkdown(analysis);
-    const artifactPrompt = options.outputFormat === 'detailed' 
-      ? this.reportFormatter.formatArtifactPrompt(analysis)
-      : undefined;
-
-    return {
-      report: markdownReport,
-      artifactPrompt,
-    };
+    return this.reportFormatter.formatMarkdown(analysis);
   }
 }

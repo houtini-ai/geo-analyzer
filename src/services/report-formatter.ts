@@ -1,5 +1,4 @@
 import { GeoAnalysis, GeoScores } from '../types/geo.types.js';
-import { createArtifactPrompt } from '../prompts/artifact-report.js';
 
 export class ReportFormatter {
   formatMarkdown(analysis: GeoAnalysis): string {
@@ -16,14 +15,16 @@ export class ReportFormatter {
     sections.push(`\n## Key Metrics\n`);
     sections.push(this.formatMetrics(analysis.metrics));
 
+    sections.push(`\n## Detailed Analysis\n`);
+    sections.push(this.formatDetailedAnalysis(analysis.metrics));
+
+    sections.push(`\n## Content Chunking Analysis\n`);
+    sections.push(this.formatChunking(analysis.chunking));
+
     sections.push(`\n## Recommendations\n`);
     sections.push(this.formatRecommendations(analysis.recommendations));
 
     return sections.join('\n');
-  }
-
-  formatArtifactPrompt(analysis: GeoAnalysis): string {
-    return createArtifactPrompt(analysis);
   }
 
   private formatScores(scores: GeoScores): string {
@@ -68,6 +69,55 @@ ${getEmoji(scores.citability)} **Citability:** ${scores.citability}/10
     `.trim();
   }
 
+  private formatDetailedAnalysis(metrics: any): string {
+    const sections: string[] = [];
+
+    // Problematic sentences
+    if (metrics.sentenceLength.problematic.length > 0) {
+      sections.push('### Problematic Sentences (>30 words)\n');
+      metrics.sentenceLength.problematic.forEach((item: any, i: number) => {
+        sections.push(`**${i + 1}. ${item.location}** (${item.wordCount} words)`);
+        sections.push(`> ${item.sentence}\n`);
+      });
+    }
+
+    // Semantic triples examples
+    if (metrics.semanticTriples.examples && metrics.semanticTriples.examples.length > 0) {
+      sections.push('\n### Semantic Triple Examples\n');
+      metrics.semanticTriples.examples.forEach((example: any, i: number) => {
+        sections.push(`**${i + 1}. ${example.sentence}**`);
+        example.triples.forEach((triple: any) => {
+          sections.push(`- Subject: "${triple.subject}"`);
+          sections.push(`- Predicate: "${triple.predicate}"`);
+          sections.push(`- Object: "${triple.object}"`);
+          sections.push(`- Confidence: ${Math.round(triple.confidence * 100)}%\n`);
+        });
+      });
+    }
+
+    return sections.join('\n');
+  }
+
+  private formatChunking(chunking: any): string {
+    const sections: string[] = [];
+
+    sections.push(`**Average Coherence:** ${Math.round(chunking.averageCoherence * 100)}%`);
+    sections.push(`**Problematic Boundaries:** ${chunking.problematicBoundaries}\n`);
+
+    if (chunking.chunks && chunking.chunks.length > 0) {
+      sections.push('### Sample Chunks\n');
+      chunking.chunks.slice(0, 3).forEach((chunk: any, i: number) => {
+        sections.push(`**Chunk ${i + 1}**`);
+        sections.push(`- Token Count: ${chunk.tokenCount}`);
+        sections.push(`- Coherence: ${Math.round(chunk.semanticCoherence * 100)}%`);
+        sections.push(`- Self-contained: ${chunk.selfContained ? 'Yes' : 'No'}`);
+        sections.push(`- Preview: ${chunk.content.substring(0, 150)}...\n`);
+      });
+    }
+
+    return sections.join('\n');
+  }
+
   private formatRecommendations(recommendations: any[]): string {
     const high = recommendations.filter(r => r.priority === 'high');
     const medium = recommendations.filter(r => r.priority === 'medium');
@@ -79,10 +129,10 @@ ${getEmoji(scores.citability)} **Citability:** ${scores.citability}/10
       sections.push('### High Priority\n');
       high.forEach((rec, i) => {
         sections.push(`**${i + 1}. ${rec.method}**`);
-        sections.push(`Location: ${rec.location}`);
-        sections.push(`Current: ${rec.currentText}`);
-        sections.push(`Suggested: ${rec.suggestedText}`);
-        sections.push(`Rationale: ${rec.rationale}\n`);
+        sections.push(`**Location:** ${rec.location}`);
+        sections.push(`**Current:** ${rec.currentText}`);
+        sections.push(`**Suggested:** ${rec.suggestedText}`);
+        sections.push(`**Rationale:** ${rec.rationale}\n`);
       });
     }
 
@@ -90,15 +140,17 @@ ${getEmoji(scores.citability)} **Citability:** ${scores.citability}/10
       sections.push('### Medium Priority\n');
       medium.forEach((rec, i) => {
         sections.push(`**${i + 1}. ${rec.method}**`);
-        sections.push(`Location: ${rec.location}`);
-        sections.push(`Suggested: ${rec.suggestedText}\n`);
+        sections.push(`**Location:** ${rec.location}`);
+        sections.push(`**Suggested:** ${rec.suggestedText}`);
+        sections.push(`**Rationale:** ${rec.rationale}\n`);
       });
     }
 
     if (low.length > 0) {
       sections.push('### Low Priority\n');
       low.forEach((rec, i) => {
-        sections.push(`${i + 1}. ${rec.method} - ${rec.location}`);
+        sections.push(`**${i + 1}. ${rec.method}**`);
+        sections.push(`${rec.location} - ${rec.suggestedText}\n`);
       });
     }
 

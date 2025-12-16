@@ -103,28 +103,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         throw new Error('url parameter is required and must be a string');
       }
 
-      const result = await geoAnalyzer.analyze({
+      const report = await geoAnalyzer.analyze({
         url,
         query: query || 'general content analysis',
         outputFormat: output_format || 'detailed',
       });
 
-      const content: any[] = [
-        {
-          type: 'text',
-          text: result.report,
-        },
-      ];
-
-      if (result.artifactPrompt && output_format === 'detailed') {
-        content.push({
-          type: 'text',
-          text: '\n\n---\n\n' + result.artifactPrompt,
-        });
-      }
-
       return {
-        content,
+        content: [
+          {
+            type: 'text',
+            text: report,
+          },
+        ],
       };
     }
 
@@ -143,28 +134,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         throw new Error('Content too short (minimum 500 characters required)');
       }
 
-      const result = await geoAnalyzer.analyze({
+      const report = await geoAnalyzer.analyze({
         content,
         query: query || 'general content analysis',
         outputFormat: output_format || 'detailed',
       });
 
-      const responseContent: any[] = [
-        {
-          type: 'text',
-          text: result.report,
-        },
-      ];
-
-      if (result.artifactPrompt && output_format === 'detailed') {
-        responseContent.push({
-          type: 'text',
-          text: '\n\n---\n\n' + result.artifactPrompt,
-        });
-      }
-
       return {
-        content: responseContent,
+        content: [
+          {
+            type: 'text',
+            text: report,
+          },
+        ],
       };
     }
 
