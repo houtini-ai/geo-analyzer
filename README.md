@@ -1,9 +1,10 @@
 # GEO Analyzer v2.0
 
-Local GEO (Generative Engine Optimization) analysis powered by Claude Sonnet 4.5. Zero external dependencies - just add your Anthropic API key and go.
-
+[![Smithery MCP Server](https://smithery.ai/badge/@houtini/geo-analyzer)](https://smithery.ai/server/@houtini/geo-analyzer)
 [![npm version](https://img.shields.io/npm/v/@houtini/geo-analyzer)](https://www.npmjs.com/package/@houtini/geo-analyzer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+Local GEO (Generative Engine Optimization) analysis powered by Claude Sonnet 4.5. Zero external dependencies - just add your Anthropic API key and go.
 
 ## What is GEO?
 
