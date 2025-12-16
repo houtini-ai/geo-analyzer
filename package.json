@@ -1,30 +1,35 @@
 {
-  "name": "geo-analyzer",
-  "version": "1.0.0",
-  "description": "MCP server and Cloudflare Worker for AI search engine optimization using GEO principles",
+  "name": "@houtini/geo-analyzer",
+  "version": "2.0.1",
+  "description": "Local GEO (Generative Engine Optimization) analysis powered by Claude Sonnet 4.5. Zero external dependencies, instant setup with npx.",
   "type": "module",
-  "private": true,
-  "workspaces": [
-    "packages/*"
+  "bin": {
+    "geo-analyzer": "./dist/index.js"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
-    "lint": "npm run lint --workspaces",
-    "dev:worker": "npm run dev --workspace=packages/cloudflare-worker",
-    "dev:mcp": "npm run dev --workspace=packages/mcp-server",
-    "deploy": "npm run deploy --workspace=packages/cloudflare-worker",
-    "publish:mcp": "node scripts/publish-mcp.js",
-    "publish:mcp:minor": "node scripts/publish-mcp.js minor",
-    "publish:mcp:major": "node scripts/publish-mcp.js major"
+    "build": "tsc && node -e \"require('fs').chmodSync('./dist/index.js', '755')\"",
+    "dev": "tsc --watch",
+    "test": "echo 'Tests coming soon'",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "mcp",
     "geo",
+    "generative-engine-optimization",
     "ai-search",
-    "optimization",
-    "cloudflare",
-    "jina"
+    "content-optimization",
+    "claude",
+    "anthropic",
+    "sonnet",
+    "llm",
+    "semantic-analysis",
+    "local",
+    "standalone"
   ],
   "author": {
     "name": "Houtini",
@@ -38,10 +43,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/houtini/geo-analyzer.git"
+    "url": "https://github.com/houtini-ai/geo-analyzer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/houtini-ai/geo-analyzer/issues"
+  },
+  "homepage": "https://github.com/houtini-ai/geo-analyzer#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "cheerio": "^1.0.0",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "typescript": "^5.6.0"
+    "@types/node": "^22.19.3",
+    "typescript": "^5.9.3"
   }
 }
