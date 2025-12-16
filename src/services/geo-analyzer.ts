@@ -36,6 +36,7 @@ export class GeoAnalyzer {
       contentData = {
         title: 'Pasted Content',
         content: options.content,
+        html: options.content, // Use content as HTML for pasted text
         wordCount: options.content.split(/\s+/).length,
       };
     } else {
@@ -44,7 +45,7 @@ export class GeoAnalyzer {
 
     const query = options.query || 'general content analysis';
 
-    const patternResult = this.patternAnalyzer.analyze(contentData.content, query);
+    const patternResult = this.patternAnalyzer.analyze(contentData.content, query, contentData.html);
 
     let semanticResult: SemanticAnalysisResult | null = null;
     if (this.semanticAnalyzer) {

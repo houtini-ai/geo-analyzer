@@ -1,6 +1,6 @@
 {
   "name": "@houtini/geo-analyzer",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Local GEO (Generative Engine Optimization) analysis powered by Claude Sonnet 4.5. Zero external dependencies, instant setup with npx.",
   "type": "module",
   "bin": {

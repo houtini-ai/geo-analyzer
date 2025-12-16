@@ -53,6 +53,7 @@ export class ContentFetcher {
         url,
         title: extracted.title,
         content: extracted.content,
+        html: extracted.html,
         description: extracted.description,
         wordCount: extracted.wordCount,
       };
@@ -87,6 +88,7 @@ export class ContentFetcher {
   ): {
     title: string;
     content: string;
+    html: string;
     description?: string;
     wordCount: number;
   } | null {
@@ -127,6 +129,8 @@ export class ContentFetcher {
     $article.find('img').remove();
     
     const cleanHtml = $article.html() || '';
+    
+    // Count words from text for statistics
     const $cleaned = cheerio.load(cleanHtml);
     const textContent = $cleaned.text()
       .replace(/\s+/g, ' ')
@@ -141,6 +145,7 @@ export class ContentFetcher {
     return {
       title: title || 'Untitled',
       content: textContent,
+      html: cleanHtml, // HTML for structure analysis
       description,
       wordCount,
     };

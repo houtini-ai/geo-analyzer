@@ -135,6 +135,7 @@ export interface ContentData {
   url?: string;
   title: string;
   content: string;
+  html: string; // Raw HTML for structure analysis
   wordCount: number;
   description?: string;
 }

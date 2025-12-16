@@ -10,6 +10,7 @@ import {
   ContentChunk,
   GeoRecommendation,
 } from '../types/geo.types.js';
+import * as cheerio from 'cheerio';
 
 interface PatternAnalysisResult {
   scores: GeoScores;
@@ -31,14 +32,14 @@ interface PatternAnalysisResult {
 }
 
 export class PatternAnalyzer {
-  analyze(content: string, query: string): PatternAnalysisResult {
+  analyze(content: string, query: string, html?: string): PatternAnalysisResult {
     const sentences = this.extractSentences(content);
     const words = content.split(/\s+/).filter(w => w.length > 0);
     
     const sentenceLength = this.analyzeSentenceLength(sentences);
     const claimDensity = this.analyzeClaimDensity(content, sentences);
     const dateMarkers = this.analyzeDateMarkers(sentences);
-    const structure = this.analyzeStructure(content);
+    const structure = this.analyzeStructure(html || content); // Use HTML if available
     const entities = this.analyzeEntities(content, sentences);
     const queryAlignment = this.analyzeQueryAlignment(content, query);
     const semanticTriples = this.analyzeSemanticTriples(sentences);
@@ -173,20 +174,40 @@ export class PatternAnalyzer {
   }
 
   private analyzeStructure(content: string): StructureMetrics {
-    const headingPattern = /^#{1,6}\s+.+$/gm;
-    const headings = content.match(headingPattern) || [];
+    // Try to parse as HTML first
+    let headingCount = 0;
+    let listCount = 0;
     
-    const listPattern = /^[\*\-\+]\s+.+$/gm;
-    const lists = content.match(listPattern) || [];
+    try {
+      const $ = cheerio.load(content);
+      
+      // Count HTML headings (h1-h6)
+      headingCount = $('h1, h2, h3, h4, h5, h6').length;
+      
+      // Count HTML lists
+      const ulItems = $('ul > li').length;
+      const olItems = $('ol > li').length;
+      listCount = ulItems + olItems;
+      
+    } catch (e) {
+      // Fallback to markdown parsing if HTML parsing fails
+      const headingPattern = /^#{1,6}\s+.+$/gm;
+      const headings = content.match(headingPattern) || [];
+      headingCount = headings.length;
+      
+      const listPattern = /^[\*\-\+]\s+.+$/gm;
+      const lists = content.match(listPattern) || [];
+      listCount = lists.length;
+    }
     
-    const sections = content.split(/^#{1,6}\s+.+$/gm);
-    const avgSectionLength = sections.reduce((sum, s) => sum + s.length, 0) / sections.length || 0;
+    const sections = content.split(/(<h[1-6][^>]*>.*?<\/h[1-6]>|^#{1,6}\s+.+$)/gm);
+    const avgSectionLength = sections.reduce((sum, s) => sum + s.length, 0) / Math.max(sections.length, 1);
     
     const hasTableOfContents = /table of contents/i.test(content);
     
     return {
-      headingCount: headings.length,
-      listCount: lists.length,
+      headingCount,
+      listCount,
       avgSectionLength: Math.round(avgSectionLength),
       hasTableOfContents,
     };
