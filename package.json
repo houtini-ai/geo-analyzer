@@ -53,7 +53,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
+    "@anthropic-ai/sdk": "^0.71.0",
     "@modelcontextprotocol/sdk": "^1.0.4",
     "cheerio": "^1.0.0",
     "node-fetch": "^3.3.2"
