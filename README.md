@@ -1,27 +1,26 @@
-# GEO Analyzer v2.0
+# GEO Analyzer
 
-[![Smithery MCP Server](https://smithery.ai/badge/@houtini/geo-analyzer)](https://smithery.ai/server/@houtini/geo-analyzer)
 [![npm version](https://img.shields.io/npm/v/@houtini/geo-analyzer)](https://www.npmjs.com/package/@houtini/geo-analyzer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Local GEO (Generative Engine Optimization) analysis powered by Claude Sonnet 4.5. Zero external dependencies - just add your Anthropic API key and go.
+Content analysis for AI search visibility. Measures what actually matters for getting cited by ChatGPT, Claude, Perplexity, and Google AI Overviews.
 
-## What is GEO?
+## What It Does
 
-Generative Engine Optimization (GEO) prepares content for AI-powered search engines like ChatGPT, Claude, Perplexity, and Google's AI Overviews. Unlike traditional SEO that optimizes for keyword rankings, GEO focuses on making content easily extractable, citable, and parsable by Large Language Models.
+GEO Analyzer examines content for the signals AI systems use when selecting sources to cite:
 
-## Features
+- **Claim Density** - Extractable facts per 100 words
+- **Information Density** - Word count vs predicted AI coverage
+- **Answer Frontloading** - How quickly key information appears
+- **Semantic Triples** - Structured (subject, predicate, object) relationships
+- **Entity Recognition** - Named entities AI can reference
+- **Sentence Structure** - Optimal length for AI parsing
 
-- 🚀 **Instant Setup** - Single npx command, no accounts or deployments
-- 🎯 **Research-Based** - Built on MIT's GEO methodology
-- 🤖 **Claude Sonnet 4.5** - State-of-art semantic analysis
-- 📊 **Interactive Artifacts** - Beautiful visual dashboards
-- 🔒 **Privacy-First** - Runs entirely locally with your API key
-- ⚡ **Fast** - Results in ~8 seconds
+The analysis runs locally using Claude Sonnet 4.5 for semantic extraction. No external services, no data leaving your machine.
 
 ## Installation
 
-### Claude Desktop (MCP)
+### Claude Desktop
 
 Add to your `claude_desktop_config.json`:
 
@@ -39,124 +38,134 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-**Config location:**
-- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
-- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Linux:** `~/.config/Claude/claude_desktop_config.json`
+**Config locations:**
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Linux: `~/.config/Claude/claude_desktop_config.json`
 
-Then restart Claude Desktop.
+Restart Claude Desktop after saving.
 
-## Usage
+### Requirements
 
-### Analyze a URL
+- Node.js 20+
+- Anthropic API key ([console.anthropic.com](https://console.anthropic.com))
+
+## Usage Examples
+
+### Analyse a Published URL
 
 ```
-Analyze https://example.com/your-article for "your topic"
+Analyse https://example.com/article for "topic keywords"
 ```
 
-### Analyze Text
+The topic context helps score relevance but isn't required:
 
 ```
-Analyze this text for "content optimization":
+Analyse https://example.com/article
+```
 
-[Paste your content here - minimum 500 characters]
+### Analyse Text Directly
+
+Paste content for analysis (minimum 500 characters):
+
+```
+Analyse this content for "sim racing wheels":
+
+[Your content here]
 ```
 
 ### Summary Mode
 
+Get condensed output without detailed recommendations:
+
 ```
-Analyze https://example.com with output_format=summary
+Analyse https://example.com/article with output_format=summary
 ```
 
-## What It Analyzes
+## Output
 
-### Information Density Analysis (NEW in v2.1 - Dejan AI Research)
-- **Word Count Optimization** - Optimal range: 800-1,500 words
-- **Predicted AI Coverage** - Based on empirical data from 7,060 queries
-- **Grounding Budget** - How many words AI will use at different rank positions
-- **Coverage Categories** - Excellent (<1K), Good (1-2K), Diluted (2-3K), Severely Diluted (3K+)
+### Scores (0-10)
 
-### Answer Frontloading (NEW in v2.1)
-- **First 100/300 Words** - Claim and entity density in opening content
-- **First Claim Position** - How quickly key information appears
-- **Frontloading Score** - 0-10 rating for answer immediacy
+| Score | Measures |
+|-------|----------|
+| **Overall** | Weighted average of all factors |
+| **Extractability** | How easily AI can extract facts |
+| **Readability** | Structure quality for AI parsing |
+| **Citability** | How quotable and attributable |
 
-### Pattern Analysis (MIT Research)
-- **Sentence Length** - Target: 15-20 words for optimal AI parsing
-- **Claim Density** - Target: 4+ claims per 100 words
-- **Date Markers** - Temporal context for freshness
-- **Structure** - Headings, lists, table of contents
+### Key Metrics
 
-### Semantic Analysis (Claude Sonnet 4.5)
-- **Semantic Triples** - (subject, predicate, object) relationships
-- **Named Entities** - PERSON, ORG, PRODUCT, LOCATION, DATE, MEASUREMENT
-- **Entity Diversity** - Breadth of entity types
-- **Content Chunking** - Semantic coherence analysis
+**Information Density:**
+- Word count with coverage prediction
+- Optimal range: 800-1,500 words
+- Pages under 1K words: ~61% AI coverage
+- Pages over 3K words: ~13% AI coverage
 
-### Output Scores (0-10)
-- **Overall Score** - Weighted average of all factors
-- **Extractability** - How easily AI can extract facts (now includes density + frontloading)
-- **Readability** - How well-structured for AI parsing
-- **Citability** - How quotable and attributable
+**Answer Frontloading:**
+- Claims and entities in first 100/300 words
+- First claim position
+- Score indicating answer immediacy
+
+**Claim Density:**
+- Target: 4+ claims per 100 words
+- Extractable facts, statistics, measurements
+
+**Sentence Length:**
+- Target: 15-20 words average
+- Matches Google's ~15.5 word chunk extraction
 
 ### Recommendations
-- Priority-sorted (high/medium/low)
-- Location-specific improvements
+
+Prioritised suggestions with:
+- Specific locations in content
 - Before/after examples
-- Clear rationale for each suggestion
+- Rationale based on research
 
-## Interactive Artifacts
-
-Results are displayed in a beautiful React dashboard with:
-- Score cards with color-coded grades
-- Progress bars for key metrics
-- Collapsible detailed analysis
-- Problematic sentence highlighting
-- Semantic triple visualization
-
-## Performance
-
-- **URL Analysis:** ~8-10 seconds
-- **Text Analysis:** ~5-7 seconds
-- **Cost:** ~$0.14 per analysis (Sonnet 4.5)
-
-## API Tools
+## Tools
 
 ### analyze_url
 
-Analyzes published web pages.
+Fetches and analyses published web pages.
 
-**Parameters:**
-- `url` (required): URL to analyze
-- `query` (optional): Topic context (default: "general content analysis")
-- `output_format` (optional): 'detailed' | 'summary'
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `url` | Yes | URL to analyse |
+| `query` | No | Topic context for relevance scoring |
+| `output_format` | No | `detailed` (default) or `summary` |
 
 ### analyze_text
 
-Analyzes pasted content.
+Analyses pasted content directly.
 
-**Parameters:**
-- `content` (required): Text to analyze (min 500 chars)
-- `query` (optional): Topic context
-- `output_format` (optional): 'detailed' | 'summary'
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `content` | Yes | Text to analyse (min 500 chars) |
+| `query` | No | Topic context for relevance scoring |
+| `output_format` | No | `detailed` (default) or `summary` |
 
 ## Troubleshooting
 
-### "Cannot find module" error
-Restart Claude Desktop after adding the config.
+**"ANTHROPIC_API_KEY is required"**
+Add your API key to the `env` section in config.
 
-### "ANTHROPIC_API_KEY is required" error
-Add your Anthropic API key to the `env` section in config.
+**"Cannot find module" after config change**
+Restart Claude Desktop completely.
 
-### "Content too short" error
-Minimum 500 characters required for analysis.
+**"Content too short"**
+Minimum 500 characters required for meaningful analysis.
 
-### Paywalled content
-The analyzer can only access publicly available content.
+**Paywalled content returns errors**
+The analyser can only access publicly available pages.
+
+## Performance
+
+- URL analysis: ~8-10 seconds
+- Text analysis: ~5-7 seconds  
+- Cost: ~$0.14 per analysis (Sonnet 4.5)
 
 ## Migration from v1.x
 
-v2.0 removes Cloudflare Workers and Jina dependencies:
+v2.0 removed external dependencies. Update your config:
 
 **Old (v1.x):**
 ```json
@@ -168,7 +177,7 @@ v2.0 removes Cloudflare Workers and Jina dependencies:
 }
 ```
 
-**New (v2.0):**
+**New (v2.x):**
 ```json
 {
   "env": {
@@ -177,74 +186,46 @@ v2.0 removes Cloudflare Workers and Jina dependencies:
 }
 ```
 
-## Research Foundation
-
-Based on:
-- [Generative Engine Optimization (GEO)](https://arxiv.org/abs/2311.09735) - MIT research paper
-- [Google's Grounding Chunks](https://dejan.ai/blog/how-big-are-googles-grounding-chunks/) - Dejan AI empirical research (7,060 queries)
-- [Google's Ranking Signals](https://dejan.ai/blog/googles-ranking-signals/) - Dejan AI signal analysis
-- Production testing on simracingcockpit.gg
-- Analysis of 50+ high-performing AI-cited articles
-
-### Key Research Findings (v2.1)
-
-| Finding | Value | Source |
-|---------|-------|--------|
-| Total grounding budget per query | ~2,000 words | Dejan AI |
-| Rank #1 source gets | 531 words (28%) | Dejan AI |
-| Rank #5 source gets | 266 words (13%) | Dejan AI |
-| Pages <1K words coverage | 61% | Dejan AI |
-| Pages 3K+ words coverage | 13% | Dejan AI |
-| Optimal claim density | 4+ per 100 words | MIT GEO |
-| Optimal sentence length | 15-20 words | MIT GEO |
-
 ## Development
 
 ```bash
-# Clone repository
 git clone https://github.com/houtini-ai/geo-analyzer.git
 cd geo-analyzer
-
-# Install dependencies
 npm install
-
-# Build
 npm run build
-
-# Run locally
-node dist/index.js
 ```
 
-## License
+## Research Foundation
 
-MIT © [Houtini.ai](https://houtini.ai)
+The analysis methodology draws from peer-reviewed research and empirical studies:
 
-## Links
+### MIT GEO Paper (2024)
+Aggarwal et al., "GEO: Generative Engine Optimization" - ACM SIGKDD
 
-- [npm Package](https://www.npmjs.com/package/@houtini/geo-analyzer)
-- [GitHub Repository](https://github.com/houtini-ai/geo-analyzer)
-- [MIT GEO Research Paper](https://arxiv.org/abs/2311.09735)
-- [Houtini.ai](https://houtini.ai)
+Key findings applied:
+- Claim density target of 4+ per 100 words
+- Optimal sentence length of 15-20 words
+- 40% improvement in AI citation rates with extractability focus
 
-## Changelog
+[arxiv.org/abs/2311.09735](https://arxiv.org/abs/2311.09735)
 
-### v2.1.0 (2024-12-27)
-- **Information Density Analysis** - Based on Dejan AI grounding chunks research
-- **Answer Frontloading** - Measures how quickly key information appears
-- **Coverage Prediction** - Empirical AI coverage estimates by word count
-- **Grounding Budget Simulation** - Words used at rank positions #1, #3, #5
-- **New Recommendations** - Content condensation and frontloading guidance
+### Dejan AI Grounding Research (2025)
+Empirical analysis of 7,060 queries and 2,275 pages
 
-### v2.0.1 (2024-12-16)
-- Fixed Lucide icon destructuring error in artifacts
-- Standardized light theme design
-- Improved artifact visual consistency
+Key findings applied:
+- ~2,000 word total grounding budget per query
+- Rank #1 source gets 531 words (28% of budget)
+- Rank #5 source gets 266 words (13% of budget)
+- Average extraction chunk: 15.5 words
+- Pages <1K words: 61% coverage
+- Pages 3K+ words: 13% coverage
 
-### v2.0.0 (2024-12-16)
-- Complete rewrite for local execution
-- Removed Cloudflare Workers dependency
-- Removed Jina API dependency
-- Upgraded to Claude Sonnet 4.5 for semantic analysis
-- Added interactive React artifact dashboards
-- Simplified setup to single npx command
-- Built-in content scraping with cheerio
+[dejan.ai/blog/how-big-are-googles-grounding-chunks](https://dejan.ai/blog/how-big-are-googles-grounding-chunks/)  
+[dejan.ai/blog/googles-ranking-signals](https://dejan.ai/blog/googles-ranking-signals/)
+
+### Production Validation
+Testing across simracingcockpit.gg content and analysis of 50+ high-performing AI-cited articles.
+
+---
+
+MIT License - [Houtini.ai](https://houtini.ai)
