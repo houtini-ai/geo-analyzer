@@ -92,6 +92,43 @@ export interface StructureMetrics {
   hasTableOfContents: boolean;
 }
 
+/**
+ * Information Density Metrics (v2.1)
+ * Based on Dejan AI research on Google's grounding chunks
+ * Source: https://dejan.ai/blog/how-big-are-googles-grounding-chunks/
+ */
+export interface InformationDensityMetrics {
+  wordCount: number;
+  optimalRange: { min: number; max: number };
+  predictedCoverage: number; // % of content AI would likely use
+  coverageCategory: 'excellent' | 'good' | 'diluted' | 'severely-diluted';
+  groundingBudget: {
+    ifRank1: { words: number; percentage: number };
+    ifRank3: { words: number; percentage: number };
+    ifRank5: { words: number; percentage: number };
+  };
+  recommendation: 'expand' | 'optimal' | 'condense';
+}
+
+/**
+ * Answer Immediacy Metrics (v2.1)
+ * Measures how quickly key information appears
+ */
+export interface FrontloadingMetrics {
+  first100Words: {
+    claims: number;
+    entities: number;
+    density: number;
+  };
+  first300Words: {
+    claims: number;
+    entities: number;
+    density: number;
+  };
+  firstClaimPosition: number; // Word position of first extractable claim
+  frontloadingScore: number; // 0-10, higher = answer appears earlier
+}
+
 export interface ContentChunk {
   content: string;
   semanticCoherence: number;
@@ -119,6 +156,8 @@ export interface GeoAnalysis {
     claimDensity: ClaimDensityMetrics;
     dateMarkers: DateMarkerMetrics;
     structure: StructureMetrics;
+    informationDensity: InformationDensityMetrics;
+    frontloading: FrontloadingMetrics;
     semanticTriples: SemanticTripleMetrics;
     entities: EntityMetrics;
     queryAlignment: QueryAlignmentMetrics;

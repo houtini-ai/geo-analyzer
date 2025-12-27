@@ -5,6 +5,37 @@ All notable changes to GEO Analyzer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2024-12-27
+
+### Added
+- **Information Density Analysis** - Based on Dejan AI research on Google's grounding chunks
+  - Word count optimisation with empirical coverage predictions
+  - Predicted AI coverage percentage (from Dejan's 7,060 query study)
+  - Grounding budget simulation for rank positions #1, #3, #5
+  - Coverage categories: excellent (<1K words), good (1-2K), diluted (2-3K), severely-diluted (3K+)
+  - Condensation/expansion recommendations based on optimal range (800-1,500 words)
+
+- **Answer Frontloading Analysis** - Measures how quickly key information appears
+  - First 100 words: claim count, entity count, density
+  - First 300 words: claim count, entity count, density
+  - First claim position detection
+  - Frontloading score (0-10) based on answer immediacy
+
+- **New Recommendations**
+  - Content Condensation: Warns when content exceeds optimal length
+  - Content Expansion: Suggests expansion for very short content
+  - Answer Frontloading: Recommends leading with key claims
+
+### Changed
+- Updated extractability score calculation to include density and frontloading (new weighting)
+- Report formatter now displays information density and frontloading metrics prominently
+- Recommendations reference Dejan AI research for rationale
+
+### Research Foundation
+- Dejan AI: "How Big Are Google's Grounding Chunks?" (Dec 2025)
+- Key finding: ~2,000 word budget per query, density beats length
+- Pages <1K words: 61% coverage; 3K+ words: 13% coverage
+
 ## [2.0.1] - 2024-12-16
 
 ### Fixed

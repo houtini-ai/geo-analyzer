@@ -7,6 +7,8 @@ import {
   EntityMetrics,
   QueryAlignmentMetrics,
   SemanticTripleMetrics,
+  InformationDensityMetrics,
+  FrontloadingMetrics,
   ContentChunk,
   GeoRecommendation,
 } from '../types/geo.types.js';
@@ -19,6 +21,8 @@ interface PatternAnalysisResult {
     claimDensity: ClaimDensityMetrics;
     dateMarkers: DateMarkerMetrics;
     structure: StructureMetrics;
+    informationDensity: InformationDensityMetrics;
+    frontloading: FrontloadingMetrics;
     semanticTriples: SemanticTripleMetrics;
     entities: EntityMetrics;
     queryAlignment: QueryAlignmentMetrics;
@@ -35,20 +39,27 @@ export class PatternAnalyzer {
   analyze(content: string, query: string, html?: string): PatternAnalysisResult {
     const sentences = this.extractSentences(content);
     const words = content.split(/\s+/).filter(w => w.length > 0);
+    const wordCount = words.length;
     
     const sentenceLength = this.analyzeSentenceLength(sentences);
     const claimDensity = this.analyzeClaimDensity(content, sentences);
     const dateMarkers = this.analyzeDateMarkers(sentences);
-    const structure = this.analyzeStructure(html || content); // Use HTML if available
+    const structure = this.analyzeStructure(html || content);
     const entities = this.analyzeEntities(content, sentences);
     const queryAlignment = this.analyzeQueryAlignment(content, query);
     const semanticTriples = this.analyzeSemanticTriples(sentences);
+    
+    // New v2.1 metrics based on Dejan AI research
+    const informationDensity = this.analyzeInformationDensity(wordCount);
+    const frontloading = this.analyzeFrontloading(content, words);
     
     const extractabilityScore = this.calculateExtractabilityScore({
       sentenceLength,
       claimDensity,
       dateMarkers,
       semanticTriples,
+      informationDensity,
+      frontloading,
     });
     
     const readabilityScore = this.calculateReadabilityScore({
@@ -75,6 +86,8 @@ export class PatternAnalyzer {
         claimDensity,
         dateMarkers,
         structure,
+        informationDensity,
+        frontloading,
         semanticTriples,
         entities,
         queryAlignment,
@@ -85,6 +98,8 @@ export class PatternAnalyzer {
         claimDensity,
         dateMarkers,
         structure,
+        informationDensity,
+        frontloading,
         entities,
         queryAlignment,
       }),
@@ -262,17 +277,185 @@ export class PatternAnalyzer {
     };
   }
 
+  /**
+   * Analyze information density based on Dejan AI research
+   * Source: https://dejan.ai/blog/how-big-are-googles-grounding-chunks/
+   * 
+   * Key findings:
+   * - ~2,000 word budget per query total
+   * - Pages <1K words: 61% coverage
+   * - Pages 1-2K words: 35% coverage
+   * - Pages 2-3K words: 22% coverage
+   * - Pages 3K+ words: 13% coverage
+   */
+  private analyzeInformationDensity(wordCount: number): InformationDensityMetrics {
+    // Calculate predicted coverage based on Dejan's empirical data
+    let predictedCoverage: number;
+    let coverageCategory: 'excellent' | 'good' | 'diluted' | 'severely-diluted';
+    
+    if (wordCount < 1000) {
+      predictedCoverage = 61;
+      coverageCategory = 'excellent';
+    } else if (wordCount < 2000) {
+      // Linear interpolation between 61% at 1000 and 35% at 2000
+      predictedCoverage = 61 - ((wordCount - 1000) / 1000) * 26;
+      coverageCategory = 'good';
+    } else if (wordCount < 3000) {
+      // Linear interpolation between 35% at 2000 and 22% at 3000
+      predictedCoverage = 35 - ((wordCount - 2000) / 1000) * 13;
+      coverageCategory = 'diluted';
+    } else {
+      // Asymptotic approach to 13% for 3K+
+      predictedCoverage = Math.max(13, 22 - ((wordCount - 3000) / 2000) * 9);
+      coverageCategory = 'severely-diluted';
+    }
+    
+    // Grounding budget by rank (from Dejan's data)
+    // Rank 1: 531 words (28%), Rank 3: 378 words (20%), Rank 5: 266 words (13%)
+    const groundingBudget = {
+      ifRank1: {
+        words: Math.min(531, Math.round(wordCount * 0.28)),
+        percentage: Math.min(28, Math.round((531 / wordCount) * 100)),
+      },
+      ifRank3: {
+        words: Math.min(378, Math.round(wordCount * 0.20)),
+        percentage: Math.min(20, Math.round((378 / wordCount) * 100)),
+      },
+      ifRank5: {
+        words: Math.min(266, Math.round(wordCount * 0.13)),
+        percentage: Math.min(13, Math.round((266 / wordCount) * 100)),
+      },
+    };
+    
+    // Determine recommendation
+    let recommendation: 'expand' | 'optimal' | 'condense';
+    if (wordCount < 600) {
+      recommendation = 'expand';
+    } else if (wordCount <= 1500) {
+      recommendation = 'optimal';
+    } else {
+      recommendation = 'condense';
+    }
+    
+    return {
+      wordCount,
+      optimalRange: { min: 800, max: 1500 },
+      predictedCoverage: Math.round(predictedCoverage),
+      coverageCategory,
+      groundingBudget,
+      recommendation,
+    };
+  }
+
+  /**
+   * Analyze frontloading - how quickly key information appears
+   * AI engines prioritise content that provides the answer immediately
+   */
+  private analyzeFrontloading(content: string, words: string[]): FrontloadingMetrics {
+    const first100Words = words.slice(0, 100).join(' ');
+    const first300Words = words.slice(0, 300).join(' ');
+    
+    // Claim patterns (same as claimDensity)
+    const claimPatterns = [
+      /\d+%/,
+      /\$[\d,]+/,
+      /\d+\s*(nm|kg|mm|hz|gb|mb|tb)/i,
+      /\d+\s*(users|customers|companies|people)/i,
+      /(increases?|decreases?|improves?|reduces?)\s+by\s+\d+/i,
+    ];
+    
+    // Entity patterns (basic named entity detection)
+    const entityPatterns = [
+      /[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+/, // Multi-word proper nouns
+      /[A-Z]{2,}/, // Acronyms
+      /\d+\s*(nm|Nm|kg|mm|Hz|GB|MB|TB)/i, // Measurements
+    ];
+    
+    const countPatternMatches = (text: string, patterns: RegExp[]): number => {
+      let count = 0;
+      patterns.forEach(pattern => {
+        const matches = text.match(new RegExp(pattern.source, 'gi'));
+        if (matches) count += matches.length;
+      });
+      return count;
+    };
+    
+    const first100Claims = countPatternMatches(first100Words, claimPatterns);
+    const first100Entities = countPatternMatches(first100Words, entityPatterns);
+    const first300Claims = countPatternMatches(first300Words, claimPatterns);
+    const first300Entities = countPatternMatches(first300Words, entityPatterns);
+    
+    // Find position of first claim
+    let firstClaimPosition = words.length;
+    for (let i = 0; i < words.length; i++) {
+      const textSoFar = words.slice(0, i + 1).join(' ');
+      if (claimPatterns.some(pattern => pattern.test(textSoFar))) {
+        firstClaimPosition = i + 1;
+        break;
+      }
+    }
+    
+    // Calculate frontloading score (0-10)
+    // Higher score = key information appears earlier
+    let frontloadingScore = 5; // Base score
+    
+    // Bonus for claims in first 100 words
+    frontloadingScore += Math.min(2, first100Claims * 0.5);
+    
+    // Bonus for entities in first 100 words
+    frontloadingScore += Math.min(1.5, first100Entities * 0.3);
+    
+    // Penalty for late first claim
+    if (firstClaimPosition > 100) {
+      frontloadingScore -= Math.min(2, (firstClaimPosition - 100) / 50);
+    } else if (firstClaimPosition < 30) {
+      frontloadingScore += 1; // Bonus for very early claim
+    }
+    
+    frontloadingScore = Math.max(0, Math.min(10, frontloadingScore));
+    
+    return {
+      first100Words: {
+        claims: first100Claims,
+        entities: first100Entities,
+        density: Math.round((first100Claims / 100) * 100 * 10) / 10,
+      },
+      first300Words: {
+        claims: first300Claims,
+        entities: first300Entities,
+        density: Math.round((first300Claims / 300) * 100 * 10) / 10,
+      },
+      firstClaimPosition,
+      frontloadingScore: Math.round(frontloadingScore * 10) / 10,
+    };
+  }
+
   private calculateExtractabilityScore(metrics: {
     sentenceLength: SentenceLengthMetrics;
     claimDensity: ClaimDensityMetrics;
     dateMarkers: DateMarkerMetrics;
     semanticTriples: SemanticTripleMetrics;
+    informationDensity: InformationDensityMetrics;
+    frontloading: FrontloadingMetrics;
   }): number {
     const sentenceScore = Math.max(0, 10 - Math.abs(metrics.sentenceLength.average - metrics.sentenceLength.target) / 2);
     const claimScore = Math.min(10, (metrics.claimDensity.current / metrics.claimDensity.target) * 10);
     const dateScore = Math.min(10, (metrics.dateMarkers.found / metrics.dateMarkers.recommended) * 10);
     
-    return (sentenceScore + claimScore + dateScore) / 3;
+    // New: Information density score based on coverage prediction
+    const densityScore = metrics.informationDensity.predictedCoverage / 10;
+    
+    // New: Frontloading score directly from analysis
+    const frontloadScore = metrics.frontloading.frontloadingScore;
+    
+    // Updated weighting: density and frontloading now factor in
+    return (
+      sentenceScore * 0.20 +
+      claimScore * 0.25 +
+      dateScore * 0.15 +
+      densityScore * 0.20 +
+      frontloadScore * 0.20
+    );
   }
 
   private calculateReadabilityScore(metrics: {
@@ -325,10 +508,48 @@ export class PatternAnalyzer {
     claimDensity: ClaimDensityMetrics;
     dateMarkers: DateMarkerMetrics;
     structure: StructureMetrics;
+    informationDensity: InformationDensityMetrics;
+    frontloading: FrontloadingMetrics;
     entities: EntityMetrics;
     queryAlignment: QueryAlignmentMetrics;
   }): GeoRecommendation[] {
     const recommendations: GeoRecommendation[] = [];
+    
+    // NEW: Information density recommendations (highest priority)
+    if (metrics.informationDensity.recommendation === 'condense') {
+      const severity = metrics.informationDensity.coverageCategory === 'severely-diluted' ? 'high' : 'medium';
+      recommendations.push({
+        method: 'Content Condensation',
+        priority: severity as 'high' | 'medium',
+        location: 'Entire document',
+        currentText: `${metrics.informationDensity.wordCount} words (${metrics.informationDensity.predictedCoverage}% predicted AI coverage)`,
+        suggestedText: `Reduce to 800-1,500 words for optimal AI extraction. Currently, AI systems would likely ignore ${100 - metrics.informationDensity.predictedCoverage}% of your content.`,
+        rationale: 'Research shows pages over 1,500 words see diminishing returns. A tight 800-word page gets 50%+ coverage; a 4,000-word page gets only 13%. Density beats length.',
+      });
+    }
+    
+    if (metrics.informationDensity.recommendation === 'expand') {
+      recommendations.push({
+        method: 'Content Expansion',
+        priority: 'medium',
+        location: 'Entire document',
+        currentText: `${metrics.informationDensity.wordCount} words`,
+        suggestedText: 'Expand to at least 800 words with additional claims, examples, and supporting data to provide sufficient context for AI extraction.',
+        rationale: 'Very short content may lack sufficient context for AI systems to extract meaningful information. Aim for 800-1,500 words with high claim density.',
+      });
+    }
+    
+    // NEW: Frontloading recommendations
+    if (metrics.frontloading.frontloadingScore < 5) {
+      recommendations.push({
+        method: 'Answer Frontloading',
+        priority: 'high',
+        location: 'Opening paragraph',
+        currentText: `First claim appears at word ${metrics.frontloading.firstClaimPosition}; ${metrics.frontloading.first100Words.claims} claims in first 100 words`,
+        suggestedText: 'Lead with your key claim or answer in the first 1-2 sentences. AI systems have limited "attention spans" and prioritise content that provides answers immediately.',
+        rationale: 'Google extracts ~15.5 word chunks on average. Content that leads with the answer gets prioritised. Follow the inverted pyramid structure used in journalism.',
+      });
+    }
     
     if (metrics.sentenceLength.average > 25) {
       recommendations.push({
@@ -337,7 +558,7 @@ export class PatternAnalyzer {
         location: 'Throughout document',
         currentText: `Average sentence length: ${metrics.sentenceLength.average} words`,
         suggestedText: 'Break long sentences into shorter ones (15-20 words) to improve AI parsing and fact extraction',
-        rationale: 'Shorter sentences are easier for AI systems to parse and extract discrete facts from. The optimal length for LLM comprehension is 15-20 words per sentence.',
+        rationale: 'Google extracts chunks averaging 15.5 words. Shorter sentences align with natural chunk boundaries, making extraction cleaner and more accurate.',
       });
     }
     
@@ -348,7 +569,7 @@ export class PatternAnalyzer {
         location: 'Key sections',
         currentText: `${metrics.claimDensity.current} claims per 100 words`,
         suggestedText: `Add specific statistics, numbers, and factual claims to increase claim density towards target of ${metrics.claimDensity.target} per 100 words`,
-        rationale: 'Higher claim density provides more extractable facts for AI systems to cite. Quantitative statements, statistics, and specific claims are easier for LLMs to verify and reference.',
+        rationale: 'Higher claim density provides more extractable facts for AI systems to cite. Since AI only uses a fraction of your content, pack more value into fewer words.',
       });
     }
     

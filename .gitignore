@@ -4,6 +4,12 @@ dist/
 build/
 .wrangler/
 
+# Archive folder
+archive/
+
+# Build scripts
+commit-and-push.bat
+
 # Environment files
 .env
 .env.local

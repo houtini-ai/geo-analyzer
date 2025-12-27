@@ -70,6 +70,17 @@ Analyze https://example.com with output_format=summary
 
 ## What It Analyzes
 
+### Information Density Analysis (NEW in v2.1 - Dejan AI Research)
+- **Word Count Optimization** - Optimal range: 800-1,500 words
+- **Predicted AI Coverage** - Based on empirical data from 7,060 queries
+- **Grounding Budget** - How many words AI will use at different rank positions
+- **Coverage Categories** - Excellent (<1K), Good (1-2K), Diluted (2-3K), Severely Diluted (3K+)
+
+### Answer Frontloading (NEW in v2.1)
+- **First 100/300 Words** - Claim and entity density in opening content
+- **First Claim Position** - How quickly key information appears
+- **Frontloading Score** - 0-10 rating for answer immediacy
+
 ### Pattern Analysis (MIT Research)
 - **Sentence Length** - Target: 15-20 words for optimal AI parsing
 - **Claim Density** - Target: 4+ claims per 100 words
@@ -84,7 +95,7 @@ Analyze https://example.com with output_format=summary
 
 ### Output Scores (0-10)
 - **Overall Score** - Weighted average of all factors
-- **Extractability** - How easily AI can extract facts
+- **Extractability** - How easily AI can extract facts (now includes density + frontloading)
 - **Readability** - How well-structured for AI parsing
 - **Citability** - How quotable and attributable
 
@@ -170,8 +181,22 @@ v2.0 removes Cloudflare Workers and Jina dependencies:
 
 Based on:
 - [Generative Engine Optimization (GEO)](https://arxiv.org/abs/2311.09735) - MIT research paper
+- [Google's Grounding Chunks](https://dejan.ai/blog/how-big-are-googles-grounding-chunks/) - Dejan AI empirical research (7,060 queries)
+- [Google's Ranking Signals](https://dejan.ai/blog/googles-ranking-signals/) - Dejan AI signal analysis
 - Production testing on simracingcockpit.gg
 - Analysis of 50+ high-performing AI-cited articles
+
+### Key Research Findings (v2.1)
+
+| Finding | Value | Source |
+|---------|-------|--------|
+| Total grounding budget per query | ~2,000 words | Dejan AI |
+| Rank #1 source gets | 531 words (28%) | Dejan AI |
+| Rank #5 source gets | 266 words (13%) | Dejan AI |
+| Pages <1K words coverage | 61% | Dejan AI |
+| Pages 3K+ words coverage | 13% | Dejan AI |
+| Optimal claim density | 4+ per 100 words | MIT GEO |
+| Optimal sentence length | 15-20 words | MIT GEO |
 
 ## Development
 
@@ -202,6 +227,13 @@ MIT © [Houtini.ai](https://houtini.ai)
 - [Houtini.ai](https://houtini.ai)
 
 ## Changelog
+
+### v2.1.0 (2024-12-27)
+- **Information Density Analysis** - Based on Dejan AI grounding chunks research
+- **Answer Frontloading** - Measures how quickly key information appears
+- **Coverage Prediction** - Empirical AI coverage estimates by word count
+- **Grounding Budget Simulation** - Words used at rank positions #1, #3, #5
+- **New Recommendations** - Content condensation and frontloading guidance
 
 ### v2.0.1 (2024-12-16)
 - Fixed Lucide icon destructuring error in artifacts

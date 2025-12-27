@@ -43,7 +43,27 @@ ${getEmoji(scores.citability)} **Citability:** ${scores.citability}/10
   }
 
   private formatMetrics(metrics: any): string {
+    const densityEmoji = {
+      'excellent': '🟢',
+      'good': '🟡',
+      'diluted': '🟠',
+      'severely-diluted': '🔴',
+    };
+    
     return `
+**Information Density** *(NEW - based on Dejan AI research)*
+- Word Count: ${metrics.informationDensity.wordCount} words
+- Optimal Range: ${metrics.informationDensity.optimalRange.min}-${metrics.informationDensity.optimalRange.max} words
+- ${densityEmoji[metrics.informationDensity.coverageCategory as keyof typeof densityEmoji]} Predicted AI Coverage: ${metrics.informationDensity.predictedCoverage}% (${metrics.informationDensity.coverageCategory})
+- Grounding Budget: Rank #1 = ${metrics.informationDensity.groundingBudget.ifRank1.words} words, Rank #5 = ${metrics.informationDensity.groundingBudget.ifRank5.words} words
+- Recommendation: ${metrics.informationDensity.recommendation.toUpperCase()}
+
+**Answer Frontloading** *(NEW)*
+- First 100 words: ${metrics.frontloading.first100Words.claims} claims, ${metrics.frontloading.first100Words.entities} entities
+- First 300 words: ${metrics.frontloading.first300Words.claims} claims, ${metrics.frontloading.first300Words.entities} entities
+- First claim appears at: word ${metrics.frontloading.firstClaimPosition}
+- Frontloading Score: ${metrics.frontloading.frontloadingScore}/10
+
 **Sentence Length**
 - Average: ${metrics.sentenceLength.average} words
 - Target: ${metrics.sentenceLength.target} words
