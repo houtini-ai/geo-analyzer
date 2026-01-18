@@ -223,9 +223,6 @@ Key findings applied:
 [dejan.ai/blog/how-big-are-googles-grounding-chunks](https://dejan.ai/blog/how-big-are-googles-grounding-chunks/)  
 [dejan.ai/blog/googles-ranking-signals](https://dejan.ai/blog/googles-ranking-signals/)
 
-### Production Validation
-Testing across simracingcockpit.gg content and analysis of 50+ high-performing AI-cited articles.
-
 ---
 
 MIT License - [Houtini.ai](https://houtini.ai)
