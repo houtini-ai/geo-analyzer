@@ -3,26 +3,30 @@
 [![npm version](https://img.shields.io/npm/v/@houtini/geo-analyzer)](https://www.npmjs.com/package/@houtini/geo-analyzer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Content analysis for AI search visibility. Measures what actually matters for getting cited by ChatGPT, Claude, Perplexity, and Google AI Overviews.
+**Status: Prototype** - This was our initial implementation. We've since built a production version at [aiseo.houtini.com](https://aiseo.houtini.com) using Gemini 3.0 Flash (the API behind Google Search) for better semantic intelligence.
 
-## What It Does
+Content analysis for AI search visibility. Measures what actually matters when ChatGPT, Claude, Perplexity, and Google AI Overviews decide which sources to cite.
 
-GEO Analyzer examines content for the signals AI systems use when selecting sources to cite:
+## What This Does
 
-- **Claim Density** - Extractable facts per 100 words
-- **Information Density** - Word count vs predicted AI coverage
-- **Answer Frontloading** - How quickly key information appears
-- **Semantic Triples** - Structured (subject, predicate, object) relationships
-- **Entity Recognition** - Named entities AI can reference
-- **Sentence Structure** - Optimal length for AI parsing
+I built this to answer a specific question: what makes content quotable to AI systems? Not what we think should matter, but what actually moves the needle when AI models scan thousands of sources.
 
-The analysis runs locally using Claude Sonnet 4.5 for semantic extraction. No external services, no data leaving your machine.
+The analyser examines content for signals AI systems use:
+
+- **Claim Density** - Extractable facts per 100 words (target: 4+)
+- **Information Density** - Optimal word count vs predicted AI coverage
+- **Answer Frontloading** - How quickly you provide the answer (not buried in paragraph 5)
+- **Semantic Triples** - Structured relationships AI can extract cleanly
+- **Entity Recognition** - Named entities AI can reference without ambiguity
+- **Sentence Structure** - Length optimised for AI chunking (~15 words)
+
+This runs locally using Claude Sonnet 4.5 for semantic extraction. No external services. Your content doesn't leave your machine.
 
 ## Installation
 
 ### Claude Desktop
 
-Add to your `claude_desktop_config.json`:
+Add this to your `claude_desktop_config.json`:
 
 ```json
 {
@@ -47,10 +51,10 @@ Restart Claude Desktop after saving.
 
 ### Requirements
 
-- Node.js 20+
-- Anthropic API key ([console.anthropic.com](https://console.anthropic.com))
+- Node.js 18+ (20+ recommended)
+- Anthropic API key from [console.anthropic.com](https://console.anthropic.com)
 
-## Usage Examples
+## Usage
 
 ### Analyse a Published URL
 
@@ -82,44 +86,44 @@ Get condensed output without detailed recommendations:
 Analyse https://example.com/article with output_format=summary
 ```
 
-## Output
+## What You Get
 
 ### Scores (0-10)
 
-| Score | Measures |
+| Score | What It Measures |
 |-------|----------|
 | **Overall** | Weighted average of all factors |
-| **Extractability** | How easily AI can extract facts |
+| **Extractability** | How easily AI can pull facts |
 | **Readability** | Structure quality for AI parsing |
-| **Citability** | How quotable and attributable |
+| **Citability** | How quotable and attributable your content is |
 
 ### Key Metrics
 
 **Information Density:**
 - Word count with coverage prediction
 - Optimal range: 800-1,500 words
-- Pages under 1K words: ~61% AI coverage
-- Pages over 3K words: ~13% AI coverage
+- What I've found: pages under 1K words get ~61% AI coverage, whilst pages over 3K words drop to ~13%
 
 **Answer Frontloading:**
 - Claims and entities in first 100/300 words
-- First claim position
-- Score indicating answer immediacy
+- Position of first claim
+- Score showing how quickly you answer the question
 
 **Claim Density:**
 - Target: 4+ claims per 100 words
 - Extractable facts, statistics, measurements
+- This is critical - AI needs facts to cite, not fluff
 
 **Sentence Length:**
 - Target: 15-20 words average
-- Matches Google's ~15.5 word chunk extraction
+- Matches Google's ~15.5 word chunk extraction pattern
 
 ### Recommendations
 
-Prioritised suggestions with:
-- Specific locations in content
-- Before/after examples
-- Rationale based on research
+You'll get prioritised suggestions with:
+- Specific locations in your content
+- Before/after examples where relevant
+- Rationale based on research (not guesswork)
 
 ## Tools
 
@@ -127,7 +131,7 @@ Prioritised suggestions with:
 
 Fetches and analyses published web pages.
 
-| Parameter | Required | Description |
+| Parameter | Required | What It Does |
 |-----------|----------|-------------|
 | `url` | Yes | URL to analyse |
 | `query` | No | Topic context for relevance scoring |
@@ -137,7 +141,7 @@ Fetches and analyses published web pages.
 
 Analyses pasted content directly.
 
-| Parameter | Required | Description |
+| Parameter | Required | What It Does |
 |-----------|----------|-------------|
 | `content` | Yes | Text to analyse (min 500 chars) |
 | `query` | No | Topic context for relevance scoring |
@@ -149,19 +153,19 @@ Analyses pasted content directly.
 Add your API key to the `env` section in config.
 
 **"Cannot find module" after config change**
-Restart Claude Desktop completely.
+Restart Claude Desktop completely. I mean fully close and reopen it.
 
 **"Content too short"**
-Minimum 500 characters required for meaningful analysis.
+Minimum 500 characters required. The semantic analysis needs enough text to work with.
 
 **Paywalled content returns errors**
-The analyser can only access publicly available pages.
+The analyser can only access publicly available pages. It's not going to bypass authentication.
 
 ## Performance
 
 - URL analysis: ~8-10 seconds
 - Text analysis: ~5-7 seconds  
-- Cost: ~$0.14 per analysis (Sonnet 4.5)
+- Cost: ~$0.14 per analysis (Sonnet 4.5 pricing)
 
 ## Migration from v1.x
 
@@ -186,23 +190,14 @@ v2.0 removed external dependencies. Update your config:
 }
 ```
 
-## Development
+## What This Is Based On
 
-```bash
-git clone https://github.com/houtini-ai/geo-analyzer.git
-cd geo-analyzer
-npm install
-npm run build
-```
-
-## Research Foundation
-
-The analysis methodology draws from peer-reviewed research and empirical studies:
+The analysis methodology comes from peer-reviewed research and empirical studies, not marketing intuition.
 
 ### MIT GEO Paper (2024)
 Aggarwal et al., "GEO: Generative Engine Optimization" - ACM SIGKDD
 
-Key findings applied:
+Key findings I've applied:
 - Claim density target of 4+ per 100 words
 - Optimal sentence length of 15-20 words
 - 40% improvement in AI citation rates with extractability focus
@@ -212,7 +207,7 @@ Key findings applied:
 ### Dejan AI Grounding Research (2025)
 Empirical analysis of 7,060 queries and 2,275 pages
 
-Key findings applied:
+What matters from their findings:
 - ~2,000 word total grounding budget per query
 - Rank #1 source gets 531 words (28% of budget)
 - Rank #5 source gets 266 words (13% of budget)
@@ -223,8 +218,26 @@ Key findings applied:
 [dejan.ai/blog/how-big-are-googles-grounding-chunks](https://dejan.ai/blog/how-big-are-googles-grounding-chunks/)  
 [dejan.ai/blog/googles-ranking-signals](https://dejan.ai/blog/googles-ranking-signals/)
 
-### Production Validation
-Testing across simracingcockpit.gg content and analysis of 50+ high-performing AI-cited articles.
+### Production Testing
+I've tested this across SimRacingCockpit.gg content and analysed 50+ high-performing AI-cited articles to validate the patterns.
+
+## Development
+
+```bash
+git clone https://github.com/houtini-ai/geo-analyzer.git
+cd geo-analyzer
+npm install
+npm run build
+```
+
+Test locally:
+```bash
+node dist/index.js
+```
+
+## About the Production Version
+
+Whilst this MCP prototype works well, we've built [aiseo.houtini.com](https://aiseo.houtini.com) with Gemini 3.0 Flash for production use. Gemini powers Google Search, which means better semantic understanding and more reliable entity extraction. Worth checking out if you're doing this at scale.
 
 ---
 
