@@ -1,0 +1,12 @@
+feat: migrate to MCP SDK 1.25.3 with ES modules
+
+- Update SDK from 1.0.4 to 1.25.3
+- Convert to McpServer with registerTool API
+- Add Zod schema validation for tools
+- Update TypeScript to nodenext module resolution
+- Add DOM lib for fetch API types
+- Fix Node.js v24 compatibility
+- Update README in authentic voice with production version context
+
+Breaking: None (all tool interfaces preserved)
+Fixes: Node v24 ERR_MODULE_NOT_FOUND errors
