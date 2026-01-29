@@ -1,7 +1,8 @@
 {
   "name": "@houtini/geo-analyzer",
   "version": "2.1.1",
-  "description": "Local GEO (Generative Engine Optimization) analysis powered by Claude Sonnet 4.5. Zero external dependencies, instant setup with npx.",
+  "mcpName": "io.github.houtini-ai/geo-analyzer",
+  "description": "AI search optimization analysis with actionable findings and gap analysis",
   "type": "module",
   "bin": {
     "geo-analyzer": "./dist/index.js"

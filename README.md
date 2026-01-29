@@ -1,6 +1,7 @@
 # GEO Analyzer
 
 [![npm version](https://img.shields.io/npm/v/@houtini/geo-analyzer)](https://www.npmjs.com/package/@houtini/geo-analyzer)
+[![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue?style=flat-square)](https://registry.modelcontextprotocol.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Status: Prototype** - This was our initial implementation. We've since built a production version at [aiseo.houtini.com](https://aiseo.houtini.com) using Gemini 3.0 Flash (the API behind Google Search) for better semantic intelligence.
