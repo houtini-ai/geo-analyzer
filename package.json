@@ -1,7 +1,8 @@
 {
   "name": "@houtini/geo-analyzer",
-  "version": "2.1.0",
-  "description": "Local GEO (Generative Engine Optimization) analysis powered by Claude Sonnet 4.5. Zero external dependencies, instant setup with npx.",
+  "version": "2.2.0",
+  "mcpName": "io.github.houtini-ai/geo-analyzer",
+  "description": "AI search optimization analysis with actionable findings and gap analysis",
   "type": "module",
   "bin": {
     "geo-analyzer": "./dist/index.js"
@@ -12,7 +13,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('./dist/index.js', '755')\"",
+    "build": "tsc",
     "dev": "tsc --watch",
     "test": "echo 'Tests coming soon'",
     "prepublishOnly": "npm run build"
@@ -38,7 +39,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=18.0.0",
     "npm": ">=9.0.0"
   },
   "repository": {
@@ -53,13 +54,15 @@
     "access": "public"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
-    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@anthropic-ai/sdk": "^0.72.1",
+    "@modelcontextprotocol/sdk": "^1.25.3",
     "cheerio": "^1.0.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "zod": "^3.25.0"
   },
   "devDependencies": {
-    "@types/node": "^22.19.3",
-    "typescript": "^5.9.3"
+    "@types/node": "^22.19.8",
+    "typescript": "^5.9.3",
+    "undici": "^7.20.0"
   }
 }
