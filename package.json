@@ -1,6 +1,6 @@
 {
   "name": "@houtini/geo-analyzer",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "mcpName": "io.github.houtini-ai/geo-analyzer",
   "description": "AI search optimization analysis with actionable findings and gap analysis",
   "type": "module",
@@ -10,7 +10,8 @@
   "files": [
     "dist/**/*",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "houtini-logo.jpg"
   ],
   "scripts": {
     "build": "tsc",
@@ -49,7 +50,7 @@
   "bugs": {
     "url": "https://github.com/houtini-ai/geo-analyzer/issues"
   },
-  "homepage": "https://github.com/houtini-ai/geo-analyzer#readme",
+  "homepage": "https://houtini.com/geo-analyser-analyse-your-content-for-generative-engine-optimisation/",
   "publishConfig": {
     "access": "public"
   },
