@@ -1,6 +1,7 @@
 # GEO Analyzer
 
 [![npm version](https://img.shields.io/npm/v/@houtini/geo-analyzer)](https://www.npmjs.com/package/@houtini/geo-analyzer)
+${badge_line}
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Content analysis for AI search visibility. Measures what actually matters for getting cited by ChatGPT, Claude, Perplexity, and Google AI Overviews.
