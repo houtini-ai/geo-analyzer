@@ -20,7 +20,7 @@ const geoAnalyzer = new GeoAnalyzer(ANTHROPIC_API_KEY);
 const server = new Server(
   {
     name: 'geo-analyzer',
-    version: '2.1.0',
+    version: '3.0.1',
   },
   {
     capabilities: {

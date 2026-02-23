@@ -82,7 +82,7 @@ export class GeoAnalyzer {
 
     const analysis: GeoAnalysis = {
       analyzedAt: new Date().toISOString(),
-      version: '2.0.0',
+      version: '3.0.1',
       targetQuery: query,
       scores: patternResult.scores,
       metrics: patternResult.metrics,
