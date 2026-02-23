@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.72.1",
-    "@modelcontextprotocol/sdk": "^1.25.3",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "cheerio": "^1.0.0",
     "node-fetch": "^3.3.2",
     "zod": "^3.25.0"
