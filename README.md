@@ -1,6 +1,7 @@
 # GEO Analyzer
 
 [![npm version](https://img.shields.io/npm/v/@houtini/geo-analyzer)](https://www.npmjs.com/package/@houtini/geo-analyzer)
+[![Known Vulnerabilities](https://snyk.io/test/github/houtini-ai/geo-analyzer/badge.svg)](https://snyk.io/test/github/houtini-ai/geo-analyzer)
 ${badge_line}
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
