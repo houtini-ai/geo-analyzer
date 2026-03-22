@@ -12,6 +12,10 @@ Content analysis for AI search visibility. Measures what actually matters for ge
   </a>
 </p>
 
+> **Quick Navigation**
+>
+> [What it does](#what-it-does) | [Installation](#installation) | [Usage examples](#usage-examples) | [Output](#output) | [Tools](#tools) | [Troubleshooting](#troubleshooting) | [Research foundation](#research-foundation)
+
 ## What It Does
 
 GEO Analyzer examines content for the signals AI systems use when selecting sources to cite:
@@ -51,6 +55,22 @@ Add to your `claude_desktop_config.json`:
 - Linux: `~/.config/Claude/claude_desktop_config.json`
 
 Restart Claude Desktop after saving.
+
+### Claude Code (CLI)
+
+Claude Code uses a different registration mechanism -- it doesn't read `claude_desktop_config.json`. Use `claude mcp add` instead:
+
+```bash
+claude mcp add -e ANTHROPIC_API_KEY=sk-ant-... -s user geo-analyzer -- npx -y @houtini/geo-analyzer@latest
+```
+
+Verify with:
+
+```bash
+claude mcp get geo-analyzer
+```
+
+You should see `Status: Connected`.
 
 ### Requirements
 
