@@ -168,6 +168,14 @@ export interface GeoAnalysis {
     problematicBoundaries: number;
   };
   recommendations: GeoRecommendation[];
+  /**
+   * Why the semantic pass did not run, or null when it did.
+   *
+   * The semantic metrics (triples, entity diversity) default to 0. Without this,
+   * a failed pass is indistinguishable in the report from content that genuinely
+   * scored zero - so the report would claim a measurement that was never taken.
+   */
+  semanticSkipped?: string | null;
 }
 
 export interface ContentData {

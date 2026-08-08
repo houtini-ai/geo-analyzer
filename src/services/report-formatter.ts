@@ -13,7 +13,7 @@ export class ReportFormatter {
     sections.push(this.formatScores(analysis.scores));
 
     sections.push(`\n## Key Metrics\n`);
-    sections.push(this.formatMetrics(analysis.metrics));
+    sections.push(this.formatMetrics(analysis.metrics, analysis.semanticSkipped));
 
     sections.push(`\n## Detailed Analysis\n`);
     sections.push(this.formatDetailedAnalysis(analysis.metrics));
@@ -42,7 +42,7 @@ ${getEmoji(scores.citability)} **Citability:** ${scores.citability}/10
     `.trim();
   }
 
-  private formatMetrics(metrics: any): string {
+  private formatMetrics(metrics: any, semanticSkipped?: string | null): string {
     const densityEmoji = {
       'excellent': '🟢',
       'good': '🟡',
@@ -83,9 +83,11 @@ ${getEmoji(scores.citability)} **Citability:** ${scores.citability}/10
 - Has ToC: ${metrics.structure.hasTableOfContents ? 'Yes' : 'No'}
 
 **Semantic Analysis**
-- Triples: ${metrics.semanticTriples.total}
+${semanticSkipped
+  ? `- NOT RUN - ${semanticSkipped}\n- These metrics are unmeasured, not zero. Fix the above and re-run to get them.`
+  : `- Triples: ${metrics.semanticTriples.total}
 - Triple Density: ${metrics.semanticTriples.density}/100 words
-- Entity Diversity: ${metrics.entities.diversity}
+- Entity Diversity: ${metrics.entities.diversity}`}
     `.trim();
   }
 

@@ -45,12 +45,22 @@ export class GeoAnalyzer {
 
     const patternResult = this.patternAnalyzer.analyze(contentData.content, query, contentData.html);
 
+    // Why the semantic pass didn't run, when it didn't. Reported in the output:
+    // a swallowed failure here used to surface as "Triples: 0", which reads as
+    // "your content has no semantic triples" when the truth is "we never looked".
+    // That hid a retired model ID (claude-sonnet-4-20250514 began 404ing when it
+    // was retired) for as long as it took someone to notice the zeros.
+    let semanticSkipped: string | null = null;
     let semanticResult: SemanticAnalysisResult | null = null;
-    if (this.semanticAnalyzer) {
+
+    if (!this.semanticAnalyzer) {
+      semanticSkipped = 'no ANTHROPIC_API_KEY set';
+    } else {
       try {
         semanticResult = await this.semanticAnalyzer.analyze(contentData.content);
       } catch (error) {
-        semanticResult = null;
+        semanticSkipped = error instanceof Error ? error.message : String(error);
+        console.error(`[geo-analyzer] semantic analysis failed: ${semanticSkipped}`);
       }
     }
 
@@ -89,6 +99,7 @@ export class GeoAnalyzer {
       metrics: patternResult.metrics,
       chunking: patternResult.chunking,
       recommendations: patternResult.recommendations,
+      semanticSkipped,
     };
 
     return this.reportFormatter.formatMarkdown(analysis);
