@@ -3,6 +3,7 @@ import { PatternAnalyzer } from './pattern-analyzer.js';
 import { SemanticAnalyzer } from './semantic-analyzer.js';
 import { ReportFormatter } from './report-formatter.js';
 import { GeoAnalysis, ContentData, SemanticAnalysisResult } from '../types/geo.types.js';
+import { SERVER_VERSION } from '../version.js';
 
 export interface AnalysisOptions {
   url?: string;
@@ -82,7 +83,7 @@ export class GeoAnalyzer {
 
     const analysis: GeoAnalysis = {
       analyzedAt: new Date().toISOString(),
-      version: '3.0.1',
+      version: SERVER_VERSION,
       targetQuery: query,
       scores: patternResult.scores,
       metrics: patternResult.metrics,

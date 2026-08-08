@@ -58,3 +58,6 @@ SECURITY-UPDATES.md
 CLEANUP-FINAL.md
 DEPLOY-BUTTON-ANALYSIS.md
 README-OVERHAUL-COMPLETE.md
+
+# Local Claude session config
+.claude/

@@ -7,6 +7,7 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { GeoAnalyzer } from './services/geo-analyzer.js';
+import { SERVER_VERSION } from './version.js';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
@@ -20,7 +21,7 @@ const geoAnalyzer = new GeoAnalyzer(ANTHROPIC_API_KEY);
 const server = new Server(
   {
     name: 'geo-analyzer',
-    version: '3.0.3',
+    version: SERVER_VERSION,
   },
   {
     capabilities: {

@@ -1,6 +1,6 @@
 {
   "name": "@houtini/geo-analyzer",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "mcpName": "io.github.houtini-ai/geo-analyzer",
   "description": "AI search optimization analysis with actionable findings and gap analysis",
   "type": "module",
@@ -9,9 +9,11 @@
   },
   "files": [
     "dist/**/*",
+    "assets/logo.png",
+    "assets/icon.png",
+    "server.json",
     "README.md",
-    "LICENSE",
-    "houtini-logo.jpg"
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
@@ -21,22 +23,29 @@
   },
   "keywords": [
     "mcp",
+    "mcp-server",
+    "model-context-protocol",
     "geo",
     "generative-engine-optimization",
+    "answer-engine-optimization",
+    "aeo",
+    "llmo",
     "ai-search",
+    "ai-search-optimization",
     "content-optimization",
+    "eeat",
+    "chatgpt",
+    "perplexity",
     "claude",
     "anthropic",
-    "sonnet",
     "llm",
     "semantic-analysis",
-    "local",
-    "standalone"
+    "seo"
   ],
   "author": {
     "name": "Houtini",
-    "email": "hello@houtini.ai",
-    "url": "https://houtini.ai"
+    "email": "hello@houtini.com",
+    "url": "https://houtini.com"
   },
   "license": "MIT",
   "engines": {
