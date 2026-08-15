@@ -1,3 +1,8 @@
+> [!WARNING]
+> **Deprecated and no longer maintained.** GEO Analyzer's AI-search content analysis has been consolidated into **[SEO Audit Console](https://github.com/houtini-ai/seo-audit)** (`npm i @houtini/seo-audit-console`) — which scores AI-Overview citation, passage relevance, agent readiness and content extractability alongside a full technical SEO audit, all in one MCP. Please migrate there.
+
+---
+
 <div align="center">
   <img src="https://raw.githubusercontent.com/houtini-ai/geo-analyzer/main/assets/logo.png" width="120" height="120" alt="GEO Analyzer" />
 </div>
